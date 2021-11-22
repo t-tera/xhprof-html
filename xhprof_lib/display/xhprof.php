@@ -1380,8 +1380,18 @@ function profiler_diff_report($url_params,
  *
  */
 function displayXHProfReport($xhprof_runs_impl, $url_params, $source,
-                             $run, $wts, $symbol, $sort, $run1, $run2) {
-  if ($run) {                              // specific run to display?
+                             $run, $wts, $symbol, $sort, $run1, $run2,
+                             $delRun, $delAllRuns) {
+
+  if ($delRun) {
+    $xhprof_runs_impl->del_run($run, $source);
+    $xhprof_runs_impl->redir_to_list();
+  }
+  elseif ($delAllRuns) {
+    $xhprof_runs_impl->del_all_runs();
+    $xhprof_runs_impl->redir_to_list();
+  }
+  elseif ($run) {                              // specific run to display?
 
     // run may be a single run or a comma separate list of runs
     // that'll be aggregated. If "wts" (a comma separated list

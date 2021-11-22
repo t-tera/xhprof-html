@@ -30,6 +30,7 @@
 // @author(s)  Kannan Muthukkaruppan
 //             Changhao Jiang
 //
+require_once __DIR__ . '/constant.php';
 
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
@@ -46,7 +47,8 @@ $params = array('run'        => array(XHPROF_STRING_PARAM, ''),
                 'run2'       => array(XHPROF_STRING_PARAM, ''),
                 'source'     => array(XHPROF_STRING_PARAM, 'xhprof'),
                 'all'        => array(XHPROF_UINT_PARAM, 0),
-                'dir'        => array(XHPROF_STRING_PARAM, __DIR__),
+                'delRun'     => array(XHPROF_STRING_PARAM, ''),
+                'delAllRuns' => array(XHPROF_STRING_PARAM, ''),
                 );
 
 // pull values of these params, and create named globals for each param
@@ -81,10 +83,10 @@ $vbbar = ' class="vbbar"';
 $vrbar = ' class="vrbar"';
 $vgbar = ' class="vgbar"';
 
-$xhprof_runs_impl = new XHProfRuns_Default($dir);
+$xhprof_runs_impl = new XHProfRuns_Default();
 
 displayXHProfReport($xhprof_runs_impl, $params, $source, $run, $wts,
-                    $symbol, $sort, $run1, $run2);
+                    $symbol, $sort, $run1, $run2, $delRun, $delAllRuns);
 
 
 echo "</body>";

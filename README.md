@@ -7,8 +7,9 @@ This repository some modified for especially solo usage from [xhprof repository]
 ## Usage
 
 1. clone repo
-2. `php -S localhost:8000`
-3. Access `http://localhost:8000/?dir={Your xhprof profiling result dir}`
+2. Edit XHPROF_DATA_DIR in constant.php.
+3. ```$ php -S localhost:8000```
+4. Access http://localhost:8000/
 
 
 ## Tideways example
@@ -36,6 +37,6 @@ echo 'Profile Result: ' . $filename;
 $ php -S localhost:8000
 ```
 
-4. Access `http://localhost:8000/?dir=/tmp`
+4. Access `http://localhost:8000/`
 
 5. Enjoy profiling!

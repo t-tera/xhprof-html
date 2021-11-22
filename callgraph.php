@@ -28,6 +28,7 @@
  *
  * @author Changhao Jiang (cjiang@facebook.com)
  */
+require_once __DIR__ . '/constant.php';
 
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.
@@ -63,9 +64,6 @@ $params = array(// run id param
 
                 // second run in diff mode.
                 'run2' => array(XHPROF_STRING_PARAM, ''),
-
-                // directory
-                'dir' => array(XHPROF_STRING_PARAM, __DIR__)
                 );
 
 // pull values of these params, and create named globals for each param
@@ -81,7 +79,7 @@ if (!array_key_exists($type, $xhprof_legal_image_types)) {
   $type = $params['type'][1]; // default image type.
 }
 
-$xhprof_runs_impl = new XHProfRuns_Default($dir);
+$xhprof_runs_impl = new XHProfRuns_Default();
 
 if (!empty($run)) {
   // single run call graph image generation

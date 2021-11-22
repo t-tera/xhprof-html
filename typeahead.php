@@ -20,6 +20,7 @@
  * @author(s)  Kannan Muthukkaruppan
  *             Changhao Jiang
  */
+require_once __DIR__ . '/constant.php';
 
 // by default assume that xhprof_html & xhprof_lib directories
 // are at the same level.

@@ -67,7 +67,7 @@ interface iXHProfRuns {
  */
 class XHProfRuns_Default implements iXHProfRuns {
 
-  private $dir = '';
+  private $dir = XHPROF_DATA_DIR;
   private $suffix = 'xhprof';
 
   private function gen_run_id($type) {
@@ -81,33 +81,31 @@ class XHProfRuns_Default implements iXHProfRuns {
       $file = "$run_id." . $this->suffix;
     }
 
+    $file = str_replace(['\\','/',chr(0)], '', $file);
+
     if (!empty($this->dir)) {
       $file = $this->dir . "/" . $file;
     }
     return $file;
   }
 
-  public function __construct($dir = null) {
+  public function del_run($run_id, $type) {
+    $file_name = $this->file_name($run_id, $type);
+    $tmp = explode(".", $file_name);
+    $ext = $tmp[count($tmp) - 1];
+    if (count($tmp) >= 2 && $ext === $this->suffix) {
+      return unlink($file_name);
+    }
+  }
 
-    // if user hasn't passed a directory location,
-    // we use the xhprof.output_dir ini setting
-    // if specified, else we default to the directory
-    // in which the error_log file resides.
-
-    if (empty($dir)) {
-      $dir = ini_get("xhprof.output_dir");
-      if (empty($dir)) {
-
-        $dir = sys_get_temp_dir();
-
-        xhprof_error("Warning: Must specify directory location for XHProf runs. ".
-                     "Trying {$dir} as default. You can either pass the " .
-                     "directory location as an argument to the constructor ".
-                     "for XHProfRuns_Default() or set xhprof.output_dir ".
-                     "ini param.");
+  public function del_all_runs() {
+    foreach (scandir($this->dir) as $fn) {
+      $tmp = explode(".", $fn);
+      $ext = $tmp[count($tmp) - 1];
+      if (count($tmp) >= 2 && $ext === $this->suffix) {
+        unlink("{$this->dir}/{$fn}");
       }
     }
-    $this->dir = $dir;
   }
 
   public function get_run($run_id, $type, &$run_desc) {
@@ -150,7 +148,10 @@ class XHProfRuns_Default implements iXHProfRuns {
 
   function list_runs($url_params) {
     if (is_dir($this->dir)) {
-        echo "<hr/>Existing runs:\n<ul>\n";
+        echo "<hr/>Existing runs:";
+        echo "<form method=post>";
+        echo "<button name=\"delAllRuns\" value=\"1\" onclick=\"return confirm('Delete all?')\">DELETE ALL</button>";
+        echo "\n<ul>\n";
         $files = glob("{$this->dir}/*.{$this->suffix}");
         usort($files, function($a,$b) {return filemtime($b) - filemtime($a);});
         foreach ($files as $file) {
@@ -161,12 +162,25 @@ class XHProfRuns_Default implements iXHProfRuns {
             $base_url_params['source'] = $source;
             $base_url_params = '?' . http_build_query($base_url_params);
 
-            echo '<li><a href="' . htmlentities($_SERVER['SCRIPT_NAME'])
-                . $base_url_params . '">'
+            $delUrl = $base_url_params. '&delRun=1';
+
+            echo '<li>'
+                . '<button formaction="'. htmlentities($delUrl). '">DEL</button>'
+                . '&nbsp;'
+                . '<a href="' . $base_url_params . '">'
                 . htmlentities(basename($file)) . "</a><small> "
-                . date("Y-m-d H:i:s", filemtime($file)) . "</small></li>\n";
+                . date("Y-m-d H:i:s", filemtime($file))
+                . " - "
+                . number_format(filesize($file))
+                . " bytes</small></li>\n";
         }
         echo "</ul>\n";
+        echo "</form>\n";
     }
   }
+
+    function redir_to_list() {
+        header('Location: .');
+        exit(0);
+    }
 }
