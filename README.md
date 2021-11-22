@@ -40,3 +40,8 @@ $ php -S localhost:8000
 4. Access `http://localhost:8000/`
 
 5. Enjoy profiling!
+
+
+## Notes
+
+Data file deletion feature was added by t-tera.
