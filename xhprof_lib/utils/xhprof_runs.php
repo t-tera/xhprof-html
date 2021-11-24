@@ -153,7 +153,10 @@ class XHProfRuns_Default implements iXHProfRuns {
         echo "<button name=\"delAllRuns\" value=\"1\" onclick=\"return confirm('Delete all?')\">DELETE ALL</button>";
         echo "\n<ul>\n";
         $files = glob("{$this->dir}/*.{$this->suffix}");
-        usort($files, function($a,$b) {return filemtime($b) - filemtime($a);});
+        usort($files, function($a,$b) {
+            $tdiff = filemtime($b) - filemtime($a);
+            return $tdiff === 0 ? strcmp($a, $b) : $tdiff;
+        });
         foreach ($files as $file) {
             list($run,$source) = explode('.', basename($file));
 
@@ -167,7 +170,7 @@ class XHProfRuns_Default implements iXHProfRuns {
             echo '<li>'
                 . '<button formaction="'. htmlentities($delUrl). '">DEL</button>'
                 . '&nbsp;'
-                . '<a href="' . $base_url_params . '">'
+                . '<a href="' . htmlentities($base_url_params) . '">'
                 . htmlentities(basename($file)) . "</a><small> "
                 . date("Y-m-d H:i:s", filemtime($file))
                 . " - "
